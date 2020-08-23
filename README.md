@@ -1,4 +1,4 @@
-# tf_asg_dual_alb_nlb
+# tf-asg-dual-alb-nlb
 
 Sandbox experimenting with an ASG which has both a NLB and ALB fronting it
 
