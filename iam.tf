@@ -23,7 +23,7 @@ resource "aws_iam_instance_profile" "web" {
 }
 
 resource "aws_iam_policy" "sessions_manager" {
-  name = "sessions-manager-instance"
+  name   = "sessions-manager-instance"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -71,5 +71,5 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "web_sessions_manager" {
   policy_arn = aws_iam_policy.sessions_manager.arn
-  role = aws_iam_role.web.name
+  role       = aws_iam_role.web.name
 }

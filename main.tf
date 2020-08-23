@@ -13,11 +13,11 @@ data "aws_ssm_parameter" "amazon_linux_2" {
 
 resource "aws_launch_template" "default" {
 
-  image_id = data.aws_ssm_parameter.amazon_linux_2.value
+  image_id      = data.aws_ssm_parameter.amazon_linux_2.value
   instance_type = "t3.small"
   vpc_security_group_ids = [
     module.vpc.sg_allow_egress,
-        module.vpc.sg_allow_80,
+    module.vpc.sg_allow_80,
     module.vpc.sg_allow_vpc
   ]
 
@@ -51,12 +51,12 @@ resource "aws_autoscaling_group" "web" {
     module.vpc.subnet_private3,
   ]
 
-  min_size = 3
+  min_size         = 3
   desired_capacity = 3
-  max_size = 3
+  max_size         = 3
 
   launch_template {
-    id = aws_launch_template.default.id
+    id      = aws_launch_template.default.id
     version = "$Latest"
   }
 
@@ -65,15 +65,15 @@ resource "aws_autoscaling_group" "web" {
     aws_lb_target_group.tg_nlb.arn,
   ]
 
-  health_check_type = "ELB"
+  health_check_type         = "ELB"
   health_check_grace_period = 60
 }
 
 resource "aws_lb_target_group" "tg_alb" {
 
-  name = "tg-alb"
-  vpc_id = module.vpc.vpc_id
-  port = 80
+  name     = "tg-alb"
+  vpc_id   = module.vpc.vpc_id
+  port     = 80
   protocol = "HTTP"
 
   deregistration_delay = 0
@@ -81,16 +81,16 @@ resource "aws_lb_target_group" "tg_alb" {
 
 resource "aws_lb_target_group" "tg_nlb" {
 
-  name = "tg-nlb"
-  vpc_id = module.vpc.vpc_id
-  port = 80
+  name     = "tg-nlb"
+  vpc_id   = module.vpc.vpc_id
+  port     = 80
   protocol = "TCP"
 
   deregistration_delay = 0
 }
 
 resource "aws_lb" "alb" {
-  name = "alb"
+  name               = "alb"
   load_balancer_type = "application"
   security_groups = [
     module.vpc.sg_allow_egress,
@@ -107,16 +107,16 @@ resource "aws_lb" "alb" {
 
 resource "aws_lb_listener" "alb" {
   load_balancer_arn = aws_lb.alb.arn
-  port = 80
+  port              = 80
   default_action {
     target_group_arn = aws_lb_target_group.tg_alb.arn
-    type = "forward"
+    type             = "forward"
   }
 }
 
 
 resource "aws_lb" "nlb" {
-  name = "nlb"
+  name               = "nlb"
   load_balancer_type = "network"
 
   subnets = [
@@ -131,12 +131,12 @@ resource "aws_lb" "nlb" {
 
 resource "aws_lb_listener" "nlb" {
   load_balancer_arn = aws_lb.nlb.arn
-  port = 80
+  port              = 80
 
   protocol = "TCP"
 
   default_action {
     target_group_arn = aws_lb_target_group.tg_nlb.arn
-    type = "forward"
+    type             = "forward"
   }
 }
